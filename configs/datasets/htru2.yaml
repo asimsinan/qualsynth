@@ -1,0 +1,54 @@
+# HTRU2 Pulsar Stars Dataset Configuration
+
+name: "htru2"
+description: "HTRU2 dataset for predicting pulsar stars from radio signals"
+
+# Dataset properties
+properties:
+  n_samples: 17898
+  n_features: 8
+  n_classes: 2
+  imbalance_ratio: 9.92
+  minority_class: 1
+  minority_class_name: "pulsar"
+
+# No sensitive attributes for this dataset
+sensitive_attributes: []
+
+# Data splits
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+
+# Random seeds for reproducibility
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+# Fairness thresholds
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+# Evaluation metrics
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+# Dataset-specific notes
+notes: |
+  - Large dataset (17898 samples)
+  - Astronomy domain - pulsar star detection
+  - 8 numerical features (signal statistics)
+  - High imbalance ratio (9.92:1)
+  - From HTRU2 survey data
+

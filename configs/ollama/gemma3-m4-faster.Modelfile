@@ -1,0 +1,5 @@
+FROM gemma3-m4-fast
+PARAMETER num_ctx 32768
+PARAMETER num_thread 10
+PARAMETER num_batch 1024
+PARAMETER num_gpu 999

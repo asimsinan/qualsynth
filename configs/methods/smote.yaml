@@ -1,0 +1,44 @@
+# SMOTE (Synthetic Minority Over-sampling Technique) Configuration
+
+name: "SMOTE"
+type: "baseline"
+description: "Synthetic Minority Over-sampling Technique using k-nearest neighbors"
+
+# Method category
+category: "traditional"
+
+# Hyperparameters
+hyperparameters:
+  k_neighbors: 5
+  sampling_strategy: "auto"  # Balance to 1:1 ratio
+  random_state: null  # Will be set by experiment config
+
+# Hyperparameter tuning grid
+tuning_grid:
+  k_neighbors: [3, 5, 7]
+  sampling_strategy: ["auto", 0.5, 0.75]
+
+# Method-specific settings
+settings:
+  requires_numerical: false  # Can handle mixed types
+  requires_preprocessing: true
+  supports_multiclass: true
+
+# Expected performance
+expected:
+  time_per_sample: 0.001  # seconds
+  memory_usage: "low"
+  scalability: "excellent"
+
+# References
+references:
+  - "Chawla et al. (2002). SMOTE: Synthetic Minority Over-sampling Technique"
+  - "imbalanced-learn library implementation"
+
+# Notes
+notes: |
+  - Fast and efficient
+  - Works well for low-dimensional data
+  - May create unrealistic samples in high dimensions
+  - No fairness awareness
+

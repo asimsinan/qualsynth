@@ -1,0 +1,51 @@
+# TabFairGDT (Tabular Fair Gradient Boosted Decision Trees) Configuration
+
+name: "TabFairGDT"
+type: "baseline"
+description: "Fair oversampling using gradient boosted decision trees with fairness-aware leaf resampling"
+
+# Method category
+category: "fairness_aware"
+
+# Hyperparameters
+hyperparameters:
+  n_estimators: 100
+  max_depth: 5
+  learning_rate: 0.1
+  min_samples_leaf: 10
+  fairness_weight: 0.5
+  resampling_strategy: "fair_leaf"  # fair_leaf, balanced_leaf
+  random_state: null  # Will be set by experiment config
+
+# Hyperparameter tuning grid
+tuning_grid:
+  n_estimators: [50, 100, 200]
+  max_depth: [3, 5, 7]
+  fairness_weight: [0.3, 0.5, 0.7]
+
+# Method-specific settings
+settings:
+  requires_numerical: false
+  requires_preprocessing: true
+  supports_multiclass: true
+  fairness_aware: true
+
+# Expected performance
+expected:
+  time_per_sample: 0.01  # seconds
+  memory_usage: "moderate"
+  scalability: "good"
+
+# References
+references:
+  - "TabFairGDT: Fair Gradient Boosted Decision Trees for Tabular Data"
+  - "Fairness-aware leaf resampling"
+
+# Notes
+notes: |
+  - Fairness-aware baseline
+  - Uses decision tree structure for fair resampling
+  - Analyzes leaf fairness and resamples accordingly
+  - Moderate computational cost
+  - Explicit fairness constraints
+

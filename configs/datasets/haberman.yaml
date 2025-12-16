@@ -1,0 +1,54 @@
+# Haberman's Survival Dataset Configuration
+
+name: "haberman"
+description: "Haberman's Survival dataset for predicting 5-year survival after breast cancer surgery"
+
+# Dataset properties
+properties:
+  n_samples: 306
+  n_features: 3
+  n_classes: 2
+  imbalance_ratio: 2.78
+  minority_class: 1
+  minority_class_name: "died within 5 years"
+
+# No sensitive attributes for this dataset
+sensitive_attributes: []
+
+# Data splits
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+
+# Random seeds for reproducibility
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+# Fairness thresholds
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+# Evaluation metrics
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+# Dataset-specific notes
+notes: |
+  - Very small dataset (306 samples)
+  - Medical domain - survival prediction
+  - Only 3 features (age, year of operation, positive nodes)
+  - Low imbalance ratio (2.78:1)
+  - Classic survival analysis benchmark
+

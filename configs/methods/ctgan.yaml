@@ -1,0 +1,54 @@
+# CTGAN (Conditional Tabular GAN) Configuration
+
+name: "CTGAN"
+type: "baseline"
+description: "Conditional Tabular GAN for synthetic data generation"
+
+# Method category
+category: "deep_learning"
+
+# Hyperparameters
+hyperparameters:
+  epochs: 300
+  batch_size: 500
+  generator_dim: [256, 256]
+  discriminator_dim: [256, 256]
+  generator_lr: 0.0002
+  discriminator_lr: 0.0002
+  discriminator_steps: 1
+  log_frequency: true
+  verbose: false
+  random_state: null  # Will be set by experiment config
+
+# Hyperparameter tuning grid
+tuning_grid:
+  epochs: [200, 300, 500]
+  batch_size: [250, 500, 1000]
+  generator_dim: [[128, 128], [256, 256], [512, 512]]
+
+# Method-specific settings
+settings:
+  requires_numerical: false
+  requires_preprocessing: true
+  supports_multiclass: true
+  gpu_accelerated: true
+
+# Expected performance
+expected:
+  time_per_sample: 0.1  # seconds (training time)
+  memory_usage: "high"
+  scalability: "moderate"
+
+# References
+references:
+  - "Xu et al. (2019). Modeling Tabular Data using Conditional GAN"
+  - "SDV library implementation"
+
+# Notes
+notes: |
+  - State-of-the-art GAN for tabular data
+  - Requires significant training time
+  - May suffer from mode collapse
+  - No explicit fairness constraints
+  - Works well for large datasets
+

@@ -1,0 +1,133 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.p12
+
+# API Keys & Credentials
+*_key.txt
+*_secret.txt
+credentials.json
+token.json
+
+
+# Data Files (large datasets)
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.tar.gz
+data/processed/*.csv
+data/processed/*.pkl
+data/processed/*.parquet
+*.h5
+*.hdf5
+
+# Model Files
+models/*.pt
+models/*.pth
+models/*.pkl
+models/*.joblib
+models/*.h5
+*.ckpt
+*.safetensors
+
+# Experiment Results
+results/
+experiments/
+outputs/
+logs/
+*.log
+
+# Plots & Visualizations
+figures/*.png
+figures/*.pdf
+figures/*.svg
+plots/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Documentation Build
+docs/_build/
+docs/.doctrees/
+site/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Large Binary Files
+*.bin
+*.dat
+*.npy
+*.npz
+
+# Backup Files
+*.backup
+requirements_autogen.txt
+

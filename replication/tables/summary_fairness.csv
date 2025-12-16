@@ -1,0 +1,9 @@
+dataset,ctgan,qualsynth,smote,tabfairgdt
+breast_cancer,,,,
+german_credit,0.08774477494981368,0.06187801501322852,0.07024543884454554,0.06822875063617309
+haberman,,,,
+htru2,,,,
+pima_diabetes,,,,
+thyroid,,,,
+wine_quality,,,,
+yeast,,,,
