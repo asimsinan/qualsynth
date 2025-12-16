@@ -6,7 +6,7 @@ classification using Large Language Models (LLMs) with iterative refinement
 and multi-objective optimization.
 
 Quick Start:
-    from qualsyn import QualSynthGenerator
+    from qualsynth import QualSynthGenerator
     
     generator = QualSynthGenerator(
         model_name="gemma3:12b",
@@ -17,7 +17,7 @@ Quick Start:
     X_synthetic, y_synthetic = generator.fit_generate(X_train, y_train)
 
 Author: Asım Sinan Yüksel
-License: GPL-3.0
+License: MIT
 """
 
 __version__ = "1.0.0"

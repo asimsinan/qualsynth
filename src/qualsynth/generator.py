@@ -6,7 +6,7 @@ using the QualSynth methodology. It wraps the more complex IterativeWorkflow
 with sensible defaults for common use cases.
 
 Example usage:
-    from qualsyn import QualSynthGenerator
+    from qualsynth import QualSynthGenerator
     
     generator = QualSynthGenerator(
         model_name="gemma3:12b",
@@ -59,7 +59,7 @@ class QualSynthGenerator:
     
     Parameters
     ----------
-    model_name : str, default="ollama/gemma:12b"
+    model_name : str, default="gemma3:12b"
         Name of the LLM model to use. Supports:
         - OpenAI models: "gpt-4", "gpt-3.5-turbo"
         - Ollama models: "gemma3:12b", "llama3:8b"
@@ -118,7 +118,7 @@ class QualSynthGenerator:
     --------
     Basic usage with default settings:
     
-    >>> from qualsyn import QualSynthGenerator
+    >>> from qualsynth import QualSynthGenerator
     >>> import pandas as pd
     >>> 
     >>> # Load your imbalanced dataset
@@ -136,7 +136,7 @@ class QualSynthGenerator:
     Using local Ollama model:
     
     >>> generator = QualSynthGenerator(
-    ...     model_name="ollama/gemma:12b",
+    ...     model_name="gemma3:12b",
     ...     api_base="http://localhost:11434/v1"
     ... )
     >>> X_syn, y_syn = generator.fit_generate(X_train, y_train)
@@ -363,4 +363,3 @@ class QualSynthGenerator:
             f"max_iterations={self.max_iterations}, "
             f"batch_size={self.batch_size})"
         )
-

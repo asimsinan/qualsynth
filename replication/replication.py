@@ -292,9 +292,9 @@ def run_full_replication(data_dir: Path, output_dir: Path, seeds: list):
         result = subprocess.run(['ollama', '--version'], capture_output=True, text=True)
         print(f"\n✓ Ollama detected: {result.stdout.strip()}")
     except FileNotFoundError:
-        print("\n✗ Ollama not found. Please install Ollama and pull gemma:12b model.")
+        print("\n✗ Ollama not found. Please install Ollama and pull gemma3:12b model.")
         print("  Installation: https://ollama.ai")
-        print("  Model: ollama pull gemma:12b")
+        print("  Model: ollama pull gemma3:12b")
         return
     
     print("\nStarting experiments...")
@@ -313,7 +313,7 @@ def run_full_replication(data_dir: Path, output_dir: Path, seeds: list):
             
             # Initialize generator
             generator = QualSynthGenerator(
-                model_name="ollama/gemma:12b",
+                model_name="gemma3:12b",
                 temperature=0.7,
                 max_iterations=20
             )

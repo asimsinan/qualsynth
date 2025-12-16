@@ -76,7 +76,7 @@ chmod +x setup_ubuntu.sh
 ```
 
 The script automatically:
-- Installs Python 3.10 and dependencies
+- Installs Python 3.8+ and dependencies
 - Creates a virtual environment
 - Installs Ollama and downloads the LLM model
 - Runs experiments with checkpointing (can be interrupted and resumed)
@@ -98,7 +98,7 @@ cd ..
 
 # Pull the model (~8GB download)
 ollama serve  # Start server (in separate terminal)
-ollama pull gemma:12b
+ollama pull gemma3:12b
 
 # Run full replication
 python replication.py --full
@@ -118,7 +118,7 @@ y_train = pd.read_csv("train_labels.csv")["target"]
 
 # Initialize generator
 generator = QualSynthGenerator(
-    model_name="ollama/gemma:12b",  # or "gpt-4" for OpenAI
+    model_name="gemma3:12b",  # or "gpt-4" for OpenAI
     temperature=0.7,
     max_iterations=20
 )
@@ -134,14 +134,14 @@ y_balanced = pd.concat([y_train, y_synthetic])
 ## Requirements
 
 ### For Quick Replication
-- Python 3.10+
+- Python 3.8+
 - pandas
 - numpy
 - scipy
 
 ### For Full Replication
 - All of the above, plus:
-- Ollama 0.13.0+ with Gemma 3 12B model
+- Ollama with Gemma 3 12B model (`ollama pull gemma3:12b`)
 - scikit-learn 1.6.1+
 - imbalanced-learn 0.14.0+
 - xgboost 3.1.1+

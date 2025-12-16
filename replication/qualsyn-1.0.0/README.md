@@ -78,7 +78,7 @@ For privacy-sensitive applications, QualSynth supports fully local deployment:
 
 ```python
 generator = QualSynthGenerator(
-    model_name="gemma2:9b",  # Model name as shown by 'ollama list'
+    model_name="gemma3:12b",  # Model name as shown by 'ollama list'
     api_base="http://localhost:11434/v1"
 )
 
@@ -103,7 +103,7 @@ X_synthetic, y_synthetic = generator.fit_generate(X_train, y_train)
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `model_name` | `"ollama/gemma:12b"` | LLM model name |
+| `model_name` | `"gemma3:12b"` | LLM model name |
 | `api_base` | `None` | API endpoint URL (e.g., `"https://openrouter.ai/api/v1"`) |
 | `api_key` | `None` | API key for cloud providers (or set `OPENAI_API_KEY` env var) |
 | `temperature` | `0.7` | Generation consistency (lower = more consistent) |
@@ -137,16 +137,17 @@ result = workflow.run(X_train, y_train, sensitive_features)
 
 ## Requirements
 
-- Python >= 3.10
-- pandas >= 2.0.0
-- scikit-learn >= 1.3.0
-- imbalanced-learn >= 0.11.0
-- xgboost >= 1.7.0
+- Python >= 3.8
+- pandas >= 1.3.0
+- scikit-learn >= 1.0.0
+- imbalanced-learn >= 0.9.0
+- xgboost >= 1.5.0
 - openai >= 1.0.0
+- scipy >= 1.7.0
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
 

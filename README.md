@@ -1,6 +1,7 @@
 # QualSynth: Quality-Driven Synthetic Data Generation via LLM-Guided Oversampling
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/qualsynth.svg)](https://pypi.org/project/qualsynth/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **QualSynth** is a Python package that leverages Large Language Models (LLMs) with iterative refinement to generate quality-validated synthetic samples for imbalanced classification tasks.
@@ -37,13 +38,28 @@ Evaluated on **8 benchmark datasets** across **320 experiments** (8 datasets × 
 
 ### Installation
 
+**From PyPI (Recommended):**
+
+```bash
+pip install qualsynth
+```
+
+**From Source:**
+
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/qualsynth.git
+git clone https://github.com/asimsinan/qualsynth.git
 cd qualsynth
 
-# Install dependencies
-pip install -r requirements.txt
+# Install in development mode
+pip install -e .
+```
+
+**Verify Installation:**
+
+```python
+from qualsynth import QualSynthGenerator
+print("QualSynth installed successfully!")
 ```
 
 ### Basic Usage
@@ -73,10 +89,10 @@ y_augmented = pd.concat([y_train, y_synthetic])
 from qualsynth import QualSynthGenerator
 
 # First, start Ollama server: ollama serve
-# Pull a model: ollama pull gemma2:9b
+# Pull a model: ollama pull gemma3:12b
 
 generator = QualSynthGenerator(
-    model_name="gemma2:9b",  # Model name from 'ollama list'
+    model_name="gemma3:12b",  # Model name from 'ollama list'
     api_base="http://localhost:11434/v1"
 )
 
@@ -133,7 +149,7 @@ qualsynth/
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `model_name` | `"ollama/gemma:12b"` | LLM model to use |
+| `model_name` | `"gemma3:12b"` | LLM model to use |
 | `api_key` | `None` | API key for cloud providers |
 | `api_base` | `None` | Custom API endpoint URL |
 | `temperature` | `0.7` | Generation diversity (lower = more consistent) |
@@ -164,10 +180,13 @@ The package has been evaluated on 8 benchmark datasets:
 
 ```bash
 # Using OpenRouter (recommended)
-python scripts/run_openrouter_experiments.py --all --seeds 42 123 456 789 1234
+python scripts/run_openrouter_experiments.py --all --seeds 42 123 456 789 1234 2024 3141 4242 5555 6789
 
 # Using local Ollama
 ./scripts/run_with_ollama_m4.sh
+
+# Using Ubuntu setup script (automated)
+./scripts/setup_ubuntu.sh
 ```
 
 ### Running Single Experiment

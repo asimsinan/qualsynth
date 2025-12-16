@@ -32,9 +32,19 @@ NC='\033[0m' # No Color
 
 # Configuration
 PYTHON_VERSION="3.10"
-OLLAMA_MODEL="gemma2:12b"  # Smaller model for broader compatibility
+OLLAMA_MODEL="gemma3:12b"  # Gemma 3 12B parameter model
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Determine if we need sudo (check if running as root or if sudo exists)
+if [[ $EUID -eq 0 ]]; then
+    SUDO=""
+elif command -v sudo &> /dev/null; then
+    SUDO="sudo"
+else
+    SUDO=""
+    print_warning "Neither root nor sudo available - some installations may fail"
+fi
 
 # Parse arguments
 SETUP_ONLY=false
@@ -121,10 +131,19 @@ check_system() {
     if command -v nvidia-smi &> /dev/null; then
         GPU_NAME=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1)
         GPU_MEM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader 2>/dev/null | head -1)
+        GPU_UTIL=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader 2>/dev/null | head -1)
         print_step "GPU: $GPU_NAME ($GPU_MEM)"
+        print_step "GPU Utilization: $GPU_UTIL"
         HAS_GPU=true
+        
+        # Check CUDA version
+        if nvidia-smi --query-gpu=driver_version --format=csv,noheader &>/dev/null; then
+            DRIVER_VER=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null | head -1)
+            print_step "NVIDIA Driver: $DRIVER_VER"
+        fi
     else
         print_warning "No NVIDIA GPU detected (CPU inference will be slower)"
+        print_warning "Ollama will run on CPU - expect ~10x slower inference"
         HAS_GPU=false
     fi
     
@@ -136,11 +155,11 @@ install_system_dependencies() {
     
     # Update package lists
     print_step "Updating package lists..."
-    sudo apt-get update -qq
+    $SUDO apt-get update -qq
     
     # Install essential packages
     print_step "Installing essential packages..."
-    sudo apt-get install -y -qq \
+    $SUDO apt-get install -y -qq \
         curl \
         wget \
         git \
@@ -154,29 +173,62 @@ install_system_dependencies() {
 }
 
 install_python() {
-    print_header "Setting Up Python $PYTHON_VERSION"
+    print_header "Setting Up Python Environment"
     
-    # Check if Python is already installed
-    if command -v python$PYTHON_VERSION &> /dev/null; then
-        print_step "Python $PYTHON_VERSION already installed"
-    else
-        print_step "Installing Python $PYTHON_VERSION..."
-        sudo add-apt-repository -y ppa:deadsnakes/ppa
-        sudo apt-get update -qq
-        sudo apt-get install -y -qq \
-            python$PYTHON_VERSION \
-            python$PYTHON_VERSION-venv \
-            python$PYTHON_VERSION-dev \
-            python$PYTHON_VERSION-distutils
+    # Try to find an available Python version (3.10, 3.9, 3.8, or system python3)
+    PYTHON_CMD=""
+    PYTHON_FULL_VERSION=""
+    for ver in "3.10" "3.11" "3.9" "3.8" "3"; do
+        if command -v python$ver &> /dev/null; then
+            PYTHON_CMD="python$ver"
+            PYTHON_VERSION="$ver"
+            PYTHON_FULL_VERSION=$(python$ver --version 2>&1 | grep -oP '\d+\.\d+' | head -1)
+            print_step "Found Python: $PYTHON_CMD ($(python$ver --version 2>&1))"
+            break
+        fi
+    done
+    
+    if [[ -z "$PYTHON_CMD" ]]; then
+        print_step "No Python found, installing Python 3..."
+        $SUDO apt-get update -qq
+        $SUDO apt-get install -y -qq python3 python3-venv python3-dev python3-pip
+        PYTHON_CMD="python3"
+        PYTHON_VERSION="3"
+        PYTHON_FULL_VERSION=$(python3 --version 2>&1 | grep -oP '\d+\.\d+' | head -1)
     fi
     
-    # Install pip
-    if ! command -v pip3 &> /dev/null; then
-        print_step "Installing pip..."
-        curl -sS https://bootstrap.pypa.io/get-pip.py | python$PYTHON_VERSION
+    # Get the actual minor version for package names (e.g., 3.8 from Python 3.8.x)
+    if [[ -z "$PYTHON_FULL_VERSION" ]]; then
+        PYTHON_FULL_VERSION=$($PYTHON_CMD --version 2>&1 | grep -oP '\d+\.\d+' | head -1)
     fi
     
-    print_step "Python setup complete"
+    print_step "Python version detected: $PYTHON_FULL_VERSION"
+    
+    # Install venv and dev packages for the specific Python version
+    print_step "Installing python${PYTHON_FULL_VERSION}-venv and dependencies..."
+    $SUDO apt-get update -qq
+    $SUDO apt-get install -y -qq \
+        python${PYTHON_FULL_VERSION}-venv \
+        python${PYTHON_FULL_VERSION}-dev \
+        python3-pip \
+        2>/dev/null || \
+    $SUDO apt-get install -y -qq \
+        python3-venv \
+        python3-dev \
+        python3-pip
+    
+    # Verify venv works
+    if ! $PYTHON_CMD -m venv --help &> /dev/null; then
+        print_error "Failed to install python venv module"
+        print_warning "Try manually: apt install python${PYTHON_FULL_VERSION}-venv"
+        exit 1
+    fi
+    
+    # Export for use in other functions
+    export PYTHON_CMD
+    export PYTHON_FULL_VERSION
+    
+    print_step "Python setup complete: $PYTHON_CMD"
 }
 
 setup_virtual_environment() {
@@ -185,27 +237,41 @@ setup_virtual_environment() {
     VENV_DIR="$PROJECT_DIR/venv"
     REPLICATION_DIR="$PROJECT_DIR/replication"
     
+    # Use PYTHON_CMD if set, otherwise find python
+    if [[ -z "$PYTHON_CMD" ]]; then
+        for ver in "3.10" "3.11" "3.9" "3.8" "3"; do
+            if command -v python$ver &> /dev/null; then
+                PYTHON_CMD="python$ver"
+                break
+            fi
+        done
+    fi
+    
     if [[ -d "$VENV_DIR" ]]; then
         print_step "Virtual environment already exists"
     else
-        print_step "Creating virtual environment..."
-        python$PYTHON_VERSION -m venv "$VENV_DIR"
+        print_step "Creating virtual environment with $PYTHON_CMD..."
+        $PYTHON_CMD -m venv "$VENV_DIR"
     fi
     
     # Activate virtual environment
     source "$VENV_DIR/bin/activate"
     
-    # Upgrade pip
-    print_step "Upgrading pip..."
-    pip install --upgrade pip -q
+    # Clear pip cache to avoid corrupted packages
+    print_step "Clearing pip cache..."
+    pip cache purge 2>/dev/null || rm -rf ~/.cache/pip 2>/dev/null || true
     
-    # Install Python dependencies
+    # Upgrade pip and setuptools
+    print_step "Upgrading pip and setuptools..."
+    pip install --upgrade pip setuptools wheel --no-cache-dir -q
+    
+    # Install Python dependencies from replication folder (Python 3.8 compatible)
     print_step "Installing Python dependencies..."
-    pip install -r "$PROJECT_DIR/requirements.txt" -q
+    pip install --no-cache-dir -r "$REPLICATION_DIR/requirements.txt"
     
-    # Install QualSynth package from replication folder
+    # Install QualSynth package from replication folder (without build isolation to avoid cache issues)
     print_step "Installing QualSynth package..."
-    pip install -e "$REPLICATION_DIR/qualsyn-1.0.0" -q
+    pip install --no-cache-dir --no-build-isolation -e "$REPLICATION_DIR/qualsyn-1.0.0"
     
     print_step "Virtual environment ready"
 }
@@ -230,7 +296,7 @@ install_ollama() {
     else
         # Try systemctl first, fall back to manual start
         if command -v systemctl &> /dev/null; then
-            sudo systemctl start ollama 2>/dev/null || nohup ollama serve > /tmp/ollama.log 2>&1 &
+            $SUDO systemctl start ollama 2>/dev/null || nohup ollama serve > /tmp/ollama.log 2>&1 &
         else
             nohup ollama serve > /tmp/ollama.log 2>&1 &
         fi
@@ -240,6 +306,17 @@ install_ollama() {
     # Verify Ollama is running
     if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
         print_step "Ollama server is running"
+        
+        # Check if Ollama is using GPU
+        if [[ "$HAS_GPU" == true ]]; then
+            # Check GPU memory usage after Ollama starts
+            sleep 2
+            GPU_MEM_USED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader 2>/dev/null | head -1)
+            print_step "GPU memory in use: $GPU_MEM_USED"
+            print_step "Ollama will use GPU for inference (faster)"
+        else
+            print_warning "Ollama running on CPU (slower inference)"
+        fi
     else
         print_error "Failed to start Ollama server"
         exit 1
@@ -261,6 +338,48 @@ download_model() {
     fi
 }
 
+generate_data_splits() {
+    print_header "Generating Data Splits"
+    
+    cd "$PROJECT_DIR"
+    source "$PROJECT_DIR/venv/bin/activate"
+    
+    print_step "Creating fresh data splits for all datasets..."
+    print_step "This ensures compatibility with the installed scikit-learn version"
+    
+    # Create splits directory if it doesn't exist
+    mkdir -p "$PROJECT_DIR/data/splits"
+    
+    python -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR/replication/qualsyn-1.0.0')
+
+from qualsyn.data.splitting import create_splits
+
+datasets = ['german_credit', 'breast_cancer', 'pima_diabetes', 'wine_quality', 
+            'yeast', 'haberman', 'thyroid', 'htru2']
+seeds = [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+print('Generating splits for 8 datasets x 10 seeds = 80 split files')
+print('=' * 60)
+
+for dataset in datasets:
+    print(f'\\nDataset: {dataset}')
+    try:
+        create_splits(dataset, seeds=seeds, output_dir='$PROJECT_DIR/data/splits')
+        print(f'  ✓ Created 10 splits')
+    except Exception as e:
+        print(f'  ✗ Error: {e}')
+        
+print('\\n' + '=' * 60)
+print('Split generation complete!')
+"
+    
+    # Verify splits were created
+    SPLIT_COUNT=$(find "$PROJECT_DIR/data/splits" -name "*.pkl" 2>/dev/null | wc -l)
+    print_step "Generated $SPLIT_COUNT split files"
+}
+
 run_quick_replication() {
     print_header "Running Quick Replication (Pre-computed Results)"
     
@@ -278,9 +397,25 @@ run_experiments() {
     cd "$PROJECT_DIR"
     source "$PROJECT_DIR/venv/bin/activate"
     
-    # Set environment variables
+    # Generate fresh data splits to ensure compatibility with installed sklearn version
+    generate_data_splits
+    
+    # Verify split files exist
+    print_step "Verifying data splits..."
+    SPLITS_DIR="$PROJECT_DIR/data/splits"
+    
+    SPLIT_COUNT=$(find "$SPLITS_DIR" -name "*.pkl" 2>/dev/null | wc -l)
+    if [[ $SPLIT_COUNT -lt 80 ]]; then
+        print_error "Only $SPLIT_COUNT split files found (expected 80)"
+        print_error "Split generation may have failed"
+        exit 1
+    else
+        print_step "Found $SPLIT_COUNT split files"
+    fi
+    
+    # Set environment variables for Ollama
     export OPENAI_API_BASE="http://localhost:11434/v1"
-    export OPENAI_API_KEY="not-needed-for-ollama"
+    export OPENAI_API_KEY="ollama"  # Ollama accepts any non-empty string
     export OLLAMA_MODEL="$OLLAMA_MODEL"
     
     # Datasets and methods to run
@@ -288,8 +423,8 @@ run_experiments() {
     METHODS=("qualsynth" "smote" "ctgan" "tabfairgdt")
     SEEDS=(42 123 456 789 1234 2024 3141 4242 5555 6789)
     
-    # Create results directory
-    RESULTS_DIR="$SCRIPT_DIR/results"
+    # Create results directory (in project root, organized by method)
+    RESULTS_DIR="$PROJECT_DIR/results/ubuntu_experiments"
     mkdir -p "$RESULTS_DIR"
     
     # Log file
@@ -324,13 +459,16 @@ run_experiments() {
                 START_TIME=$(date +%s)
                 
                 if python -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR/replication')
+
 from qualsyn import QualSynthGenerator
 from qualsyn.data.splitting import load_split
 import json
 import traceback
 
 try:
-    # Load data
+    # Load data (raw format for LLM to understand feature meanings)
     split = load_split('$dataset', seed=$seed, return_raw=True)
     X_train, y_train = split['X_train'], split['y_train']
     X_test, y_test = split['X_test'], split['y_test']

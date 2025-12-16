@@ -1,9 +1,9 @@
 [build-system]
-requires = ["setuptools>=45.0", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "qualsyn"
+name = "qualsynth"
 version = "1.0.0"
 description = "Quality-Driven Synthetic Data Generation via LLM-Guided Oversampling"
 readme = "README.md"
@@ -11,16 +11,24 @@ license = {text = "MIT"}
 authors = [
     {name = "Asim Sinan Yuksel", email = "asimyuksel@sdu.edu.tr"}
 ]
+maintainers = [
+    {name = "Asim Sinan Yuksel", email = "asimyuksel@sdu.edu.tr"}
+]
 keywords = [
     "synthetic data",
-    "oversampling",
+    "oversampling", 
     "imbalanced learning",
     "large language models",
-    "quality validation"
+    "LLM",
+    "data augmentation",
+    "machine learning",
+    "quality validation",
+    "tabular data"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
@@ -30,6 +38,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 requires-python = ">=3.8"
 dependencies = [
@@ -49,13 +58,45 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+baselines = [
+    "ctgan>=0.7.0",
+    "sdv>=1.0.0",
+]
+all = [
+    "qualsynth[dev,baselines]",
 ]
 
 [project.urls]
-Homepage = "https://github.com/asimyuksel/qualsyn"
-Repository = "https://github.com/asimyuksel/qualsyn"
+Homepage = "https://github.com/asimyuksel/qualsynth"
+Documentation = "https://github.com/asimyuksel/qualsynth#readme"
+Repository = "https://github.com/asimyuksel/qualsynth"
+Issues = "https://github.com/asimyuksel/qualsynth/issues"
+Changelog = "https://github.com/asimyuksel/qualsynth/releases"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["qualsyn*"]
+where = ["src"]
+include = ["qualsynth*"]
 
+[tool.setuptools.package-data]
+qualsynth = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
