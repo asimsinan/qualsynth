@@ -83,7 +83,7 @@ The script automatically:
 
 ### Option 3: Manual Full Replication (macOS/Windows/Linux)
 
-Runs all experiments from scratch (requires ~80 hours of computation):
+Runs all experiments from scratch:
 
 ```bash
 # Install the package

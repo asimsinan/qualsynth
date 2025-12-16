@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/qualsynth.svg)](https://pypi.org/project/qualsynth/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 **QualSynth** is a Python package that leverages Large Language Models (LLMs) with iterative refinement to generate quality-validated synthetic samples for imbalanced classification tasks.
 
@@ -213,7 +213,7 @@ python scripts/run_experiments.py --dataset german_credit --method tabfairgdt --
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0) - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
