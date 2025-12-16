@@ -6,7 +6,7 @@
 **QualSynth** is a Python package that leverages Large Language Models (LLMs) with iterative refinement to generate quality-validated synthetic samples for imbalanced classification tasks.
 
 <p align="center">
-  <img src="figures/architecture_diagram.png" alt="QualSynth Architecture" width="800"/>
+  <img src="figure/architecture_diagram.png" alt="QualSynth Architecture" width="800"/>
 </p>
 
 ## Key Features
@@ -30,7 +30,7 @@ Evaluated on **8 benchmark datasets** across **320 experiments** (8 datasets × 
 | **DPD (Fairness)** | **0.062** | 0.089 | 0.139 | 0.095 |
 
 <p align="center">
-  <img src="figures/cd_diagram_f1.png" alt="Critical Difference Diagram" width="600"/>
+  <img src="figure/cd_diagram_f1.png" alt="Critical Difference Diagram" width="600"/>
 </p>
 
 ## Quick Start
@@ -123,10 +123,6 @@ qualsynth/
 │   └── prompts/             # LLM prompt templates
 ├── configs/                 # Dataset and method configurations
 ├── scripts/                 # Experiment scripts
-├── paper/                   # Academic paper (JSS format)
-│   ├── paper.tex
-│   ├── paper.pdf
-│   └── figures/
 ├── replication/             # Replication package
 │   ├── qualsyn-1.0.0/       # Standalone package
 │   └── tables/              # Pre-computed results
