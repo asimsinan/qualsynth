@@ -13,7 +13,7 @@
 - **LLM-Guided Generation**: Uses LLMs to generate contextually aware synthetic samples that respect domain constraints
 - **Multi-Stage Validation**: Every sample passes schema validation, statistical checks, and duplicate detection
 - **Anchor-Centric Approach**: Generates variations of real minority samples, preserving natural feature correlations
-- **Zero Duplicates**: Achieves 0% duplicate ratio across all datasets (vs 29.7% for TabFairGDT)
+- **Zero Duplicates**: Achieves 0% duplicate ratio across all datasets (vs 31.5% for TabFairGDT)
 - **Fairness-Aware**: Reduces demographic parity difference without explicit fairness constraints
 - **Multiple LLM Backends**: Supports OpenAI, Ollama (local), OpenRouter, and custom endpoints
 
@@ -24,10 +24,10 @@ Evaluated on **8 benchmark datasets** across **320 experiments** (8 datasets × 
 
 | Metric              | QualSynth | SMOTE | CTGAN | TabFairGDT |
 | ------------------- | --------- | ----- | ----- | ---------- |
-| **F1 Rank**         | **2.12**  | 2.25  | 2.50  | 3.12       |
-| **ROC-AUC Rank**    | **1.63**  | 2.50  | 3.63  | 2.25       |
-| **Duplicate Ratio** | **0%**    | 0%    | 0%    | 29.7%      |
-| **DPD (Fairness)**  | **0.062** | 0.089 | 0.139 | 0.095      |
+| **F1 Rank**         | **2.17**  | 2.42  | 2.62  | 2.79       |
+| **ROC-AUC Rank**    | **1.79**  | 2.58  | 3.38  | 2.25       |
+| **Duplicate Ratio** | **0%**    | 4.0%  | 0.1%  | 31.5%      |
+| **DPD (Fairness)**  | **0.062** | 0.141 | 0.139 | 0.157      |
 
 
 ## Quick Start
@@ -168,10 +168,10 @@ The package has been evaluated on 8 benchmark datasets:
 | Breast Cancer | Medical      | 569     | 30       | 1.68:1          |
 | Pima Diabetes | Medical      | 768     | 8        | 1.87:1          |
 | Haberman      | Medical      | 306     | 3        | 2.78:1          |
-| Wine Quality  | Food Science | 4,898   | 11       | 3.39:1          |
+| Wine Quality  | Food Science | 6,497   | 12       | 4.09:1          |
 | Yeast         | Biology      | 1,484   | 8        | 28.10:1         |
-| Thyroid       | Medical      | 3,772   | 25       | 15.09:1         |
-| HTRU2         | Astronomy    | 17,898  | 8        | 9.16:1          |
+| Thyroid       | Medical      | 3,772   | 28       | 15.33:1         |
+| HTRU2         | Astronomy    | 17,898  | 8        | 9.92:1          |
 
 
 ## Reproducing Experiments
