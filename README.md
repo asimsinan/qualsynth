@@ -1,14 +1,12 @@
 # QualSynth: Quality-Driven Synthetic Data Generation via LLM-Guided Oversampling
 
-[![PyPI version](https://img.shields.io/pypi/v/qualsynth.svg)](https://pypi.org/project/qualsynth/)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[PyPI version](https://pypi.org/project/qualsynth/)
+[Python 3.8+](https://www.python.org/downloads/)
+[License: GPL v3](https://www.gnu.org/licenses/gpl-3.0)
 
 **QualSynth** is a Python package that leverages Large Language Models (LLMs) with iterative refinement to generate quality-validated synthetic samples for imbalanced classification tasks.
 
-<p align="center">
-  <img src="figure/architecture_diagram.png" alt="QualSynth Architecture" width="800"/>
-</p>
+
 
 ## Key Features
 
@@ -23,16 +21,16 @@
 
 Evaluated on **8 benchmark datasets** across **320 experiments** (8 datasets × 10 seeds × 4 methods):
 
-| Metric | QualSynth | SMOTE | CTGAN | TabFairGDT |
-|--------|-----------|-------|-------|------------|
-| **F1 Rank** | **2.12** | 2.25 | 2.50 | 3.12 |
-| **ROC-AUC Rank** | **1.63** | 2.50 | 3.63 | 2.25 |
-| **Duplicate Ratio** | **0%** | 0% | 0% | 29.7% |
-| **DPD (Fairness)** | **0.062** | 0.089 | 0.139 | 0.095 |
 
-<p align="center">
-  <img src="figure/cd_diagram_f1.png" alt="Critical Difference Diagram" width="600"/>
-</p>
+| Metric              | QualSynth | SMOTE | CTGAN | TabFairGDT |
+| ------------------- | --------- | ----- | ----- | ---------- |
+| **F1 Rank**         | **2.12**  | 2.25  | 2.50  | 3.12       |
+| **ROC-AUC Rank**    | **1.63**  | 2.50  | 3.63  | 2.25       |
+| **Duplicate Ratio** | **0%**    | 0%    | 0%    | 29.7%      |
+| **DPD (Fairness)**  | **0.062** | 0.089 | 0.139 | 0.095      |
+
+
+
 
 ## Quick Start
 
@@ -147,32 +145,36 @@ qualsynth/
 
 ## 🔧 Configuration Options
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `model_name` | `"gemma3:12b"` | LLM model to use |
-| `api_key` | `None` | API key for cloud providers |
-| `api_base` | `None` | Custom API endpoint URL |
-| `temperature` | `0.7` | Generation diversity (lower = more consistent) |
-| `batch_size` | `20` | Samples per LLM call |
-| `max_iterations` | `20` | Maximum refinement iterations |
-| `target_ratio` | `1.0` | Target class ratio (1.0 = balanced) |
-| `validation_threshold` | `4.5` | Statistical validation threshold (σ) |
-| `sensitive_attributes` | `None` | Columns for fairness-aware generation |
+
+| Parameter              | Default        | Description                                    |
+| ---------------------- | -------------- | ---------------------------------------------- |
+| `model_name`           | `"gemma3:12b"` | LLM model to use                               |
+| `api_key`              | `None`         | API key for cloud providers                    |
+| `api_base`             | `None`         | Custom API endpoint URL                        |
+| `temperature`          | `0.7`          | Generation diversity (lower = more consistent) |
+| `batch_size`           | `20`           | Samples per LLM call                           |
+| `max_iterations`       | `20`           | Maximum refinement iterations                  |
+| `target_ratio`         | `1.0`          | Target class ratio (1.0 = balanced)            |
+| `validation_threshold` | `4.5`          | Statistical validation threshold (σ)           |
+| `sensitive_attributes` | `None`         | Columns for fairness-aware generation          |
+
 
 ## Datasets
 
 The package has been evaluated on 8 benchmark datasets:
 
-| Dataset | Domain | Samples | Features | Imbalance Ratio |
-|---------|--------|---------|----------|-----------------|
-| German Credit | Finance | 1,000 | 20 | 2.33:1 |
-| Breast Cancer | Medical | 569 | 30 | 1.68:1 |
-| Pima Diabetes | Medical | 768 | 8 | 1.87:1 |
-| Haberman | Medical | 306 | 3 | 2.78:1 |
-| Wine Quality | Food Science | 4,898 | 11 | 3.39:1 |
-| Yeast | Biology | 1,484 | 8 | 28.10:1 |
-| Thyroid | Medical | 3,772 | 25 | 15.09:1 |
-| HTRU2 | Astronomy | 17,898 | 8 | 9.16:1 |
+
+| Dataset       | Domain       | Samples | Features | Imbalance Ratio |
+| ------------- | ------------ | ------- | -------- | --------------- |
+| German Credit | Finance      | 1,000   | 20       | 2.33:1          |
+| Breast Cancer | Medical      | 569     | 30       | 1.68:1          |
+| Pima Diabetes | Medical      | 768     | 8        | 1.87:1          |
+| Haberman      | Medical      | 306     | 3        | 2.78:1          |
+| Wine Quality  | Food Science | 4,898   | 11       | 3.39:1          |
+| Yeast         | Biology      | 1,484   | 8        | 28.10:1         |
+| Thyroid       | Medical      | 3,772   | 25       | 15.09:1         |
+| HTRU2         | Astronomy    | 17,898  | 8        | 9.16:1          |
+
 
 ## Reproducing Experiments
 
@@ -230,4 +232,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 **Asım Sinan Yüksel**  
 Department of Computer Engineering  
 Süleyman Demirel University  
-Email: asimyuksel@sdu.edu.tr
+Email: [asimyuksel@sdu.edu.tr](mailto:asimyuksel@sdu.edu.tr)
