@@ -8,13 +8,16 @@ build/
 develop-eggs/
 dist/
 downloads/
+/eswa
 eggs/
 .eggs/
 lib/
+
 lib64/
 parts/
 sdist/
 var/
+*.graffle
 wheels/
 pip-wheel-metadata/
 share/python-wheels/

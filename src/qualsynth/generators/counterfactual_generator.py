@@ -500,8 +500,8 @@ class CounterfactualGenerator:
                         anchor_values.append(f"{col}={val:.1f}")
                     else:
                         anchor_values.append(f"{col}={val:.2f}")
-                else:
-                    anchor_values.append(f"{col}={val}")
+        else:
+            anchor_values.append(f"{col}={val}")
             
             anchor_str = ", ".join(anchor_values)
             anchor_instructions.append(

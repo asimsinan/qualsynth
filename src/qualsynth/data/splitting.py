@@ -110,8 +110,33 @@ def load_split(dataset_name: str, seed: int, split_dir: str = "data/splits", ret
     if not split_file.exists():
         raise FileNotFoundError(f"Split file not found: {split_file}")
     
+    # Custom unpickler to handle module path changes (src.qualsynth -> qualsynth)
+    class CustomUnpickler(pickle.Unpickler):
+        def find_class(self, module, name):
+            # Map old module paths to new ones
+            if module.startswith('src.qualsynth'):
+                module = module.replace('src.qualsynth', 'qualsynth')
+            elif module == 'src':
+                # Handle direct 'src' module references
+                module = 'qualsynth'
+            return super().find_class(module, name)
+    
     with open(split_file, 'rb') as f:
-        split_data = pickle.load(f)
+        try:
+            split_data = CustomUnpickler(f).load()
+        except (ModuleNotFoundError, AttributeError) as e:
+            # Fallback to regular pickle if custom unpickler fails
+            f.seek(0)
+            try:
+                split_data = pickle.load(f)
+            except Exception:
+                # If that also fails, try to fix the import issue
+                import sys
+                # Add src to path temporarily if needed
+                if 'src' not in str(sys.path[0]):
+                    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+                f.seek(0)
+                split_data = pickle.load(f)
     
     if return_raw and 'preprocessor' in split_data:
         # Decode the data back to original format for LLM

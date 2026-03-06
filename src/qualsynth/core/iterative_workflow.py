@@ -188,7 +188,10 @@ class IterativeRefinementWorkflow:
         
         # Initialize validator (adaptive or standard)
         if self.config.enable_adaptive_validation:
-            from src.qualsynth.validation.adaptive_validator import AdaptiveValidator
+            try:
+                from ..validation.adaptive_validator import AdaptiveValidator
+            except ImportError:
+                from src.qualsynth.validation.adaptive_validator import AdaptiveValidator
             self.validator = None  # Will use adaptive validator instead
             enable_stat_val = getattr(self.config, 'enable_statistical_validation', True)
             self.adaptive_validator = AdaptiveValidator(
@@ -936,7 +939,7 @@ class IterativeRefinementWorkflow:
                 if stall_counter >= self.config.stall_iterations:
                     result.convergence_reason = f"Stalled: No progress for {stall_counter} iterations"
                     print(f"   ❌ STALLED: No new samples for {stall_counter} consecutive iterations")
-                    break
+                break
             else:
                 stall_counter = 0  # Reset on progress
             last_sample_count = current_sample_count
@@ -1084,7 +1087,7 @@ class IterativeRefinementWorkflow:
         Calculate adaptive duplicate detection threshold based on dataset characteristics.
         
         Considers: dataset size, intrinsic dimensionality, class imbalance, and feature density.
-        
+            
         Returns:
             Adaptive semantic similarity threshold (0.75 - 0.95)
         """
