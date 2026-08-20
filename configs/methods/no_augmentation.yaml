@@ -1,0 +1,14 @@
+name: "no_augmentation"
+type: "baseline"
+description: "Original imbalanced training fold with benchmark class weighting and no synthetic rows"
+category: "no_augmentation"
+
+hyperparameters:
+  classifier_imbalance_policy: "balanced"
+  augmentation_applied: false
+
+notes: |
+  Primary Reviewer 3 comparator (NoAug-CW). Random Forest and Logistic
+  Regression use class_weight=balanced; XGBoost uses an imbalance-derived
+  scale_pos_weight. No generator or post-generation validator is called.
+

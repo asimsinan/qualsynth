@@ -1,0 +1,84 @@
+# Qualsynth Anchor-Centric Configuration
+name: "qualsynth"
+type: "proposed"
+description: "Qualsynth with anchor-centric generation for correlation preservation"
+
+category: "anchor_centric_llm"
+
+# Hyperparameters
+hyperparameters:
+  model_name: "google/gemma-4-26b-a4b-it"
+  api_base: "https://openrouter.ai/api/v1"
+  api_key: null
+  
+  # ============================================================================
+  # GENERATION PARAMETERS
+  # ============================================================================
+  temperature: 0.7
+  top_p: 0.90
+  presence_penalty: 0.3
+  frequency_penalty: 0.3
+  max_output_tokens: 8192
+  reasoning_effort: null
+  strict_request_contract: false
+  
+  # ============================================================================
+  # ITERATION CONTROL
+  # ============================================================================
+  batch_size: 20
+  max_iterations: 0  # 0 = no limit, loop until target_samples reached
+  min_iterations: 3
+  stall_iterations: 10
+  
+  # ============================================================================
+  # DUPLICATE PREVENTION
+  # ============================================================================
+  duplicate_threshold: 0.10
+  enable_sota_dedup: false
+  enable_semantic_dedup: false
+  sota_semantic_threshold: 0.95
+  sota_diversity_threshold: 0.05
+  
+  # ============================================================================
+  # ANCHOR SELECTION
+  # ============================================================================
+  anchor_selection_strategy: "stratified"
+  n_anchors: 12
+
+  # ============================================================================
+  # VALIDATION
+  # ============================================================================
+  quality_threshold: 0.5
+  enable_adaptive_validation: true
+  validation_mode: "auto"
+  adaptive_std_threshold: 4.0
+  adaptive_percentile_threshold: 0.995  # 99.5th percentile guard
+  enable_statistical_validation: true
+  
+  # ============================================================================
+  # MULTI-OBJECTIVE WEIGHTS
+  # ============================================================================
+  fairness_weight: 0.00
+  diversity_weight: 0.20
+  performance_weight: 0.20
+  enable_diversity_first_selection: false
+  selection_policy: "multi_objective"
+  
+  # ============================================================================
+  # LEGACY COMPATIBILITY
+  # ============================================================================
+  counterfactual_ratio: 0.80
+  strategy: "STANDARD"
+  
+  # ============================================================================
+  # DIVERSITY PROMPTING
+  # ============================================================================
+  enable_diversity_prompting: true
+  diversity_prompt_strength: "medium"
+  
+  # ============================================================================
+  # PROMPT ENGINEERING
+  # ============================================================================
+  use_chain_of_thought: true
+  use_few_shot: true
+  n_few_shot_examples: 5

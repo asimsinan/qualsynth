@@ -1,0 +1,13 @@
+name: "no_augmentation_unweighted"
+type: "baseline"
+description: "Original imbalanced training fold without class weighting or synthetic rows"
+category: "no_augmentation"
+
+hyperparameters:
+  classifier_imbalance_policy: "none"
+  augmentation_applied: false
+
+notes: |
+  Secondary Reviewer 3 sensitivity comparator (NoAug-Unweighted). It is kept
+  separate from the primary NoAug-CW baseline in results and inference.
+

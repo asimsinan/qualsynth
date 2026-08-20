@@ -1,0 +1,60 @@
+# Alon Colon Tumor Microarray Dataset Configuration — k=500 sweep variant
+#
+# Same source as `alon_colon` (Alon et al. 1999, UGR Elvira) with k=500 SelectKBest.
+# This is the most aggressive k value in the sweep; it stress-tests whether
+# anchor-centric prompting still fits within the model's effective context budget
+# and still produces structurally faithful samples when the prompted feature count
+# is 10× the canonical k=50.
+#
+# If a model context-limit issue is observed at this k value, the
+# `run_high_dim_extension.py` runner will surface the failure transparently in the
+# manifest rather than silently truncate, so the report can document the boundary.
+
+name: "alon_colon_k500"
+description: "Alon et al. colon tumor microarray, fold-safe SelectKBest k=500 (k-sweep extension, stress test)"
+
+properties:
+  n_samples: 62
+  n_features: 2000
+  n_features_prompted_evaluated: 500
+  n_classes: 2
+  imbalance_ratio: 1.82
+  minority_class: 1
+  minority_class_name: "normal"
+  majority_class: 0
+  majority_class_name: "tumor"
+
+sensitive_attributes: []
+
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+  feature_selection: "fold_safe_select_k_best_f_classif"
+  selected_features: 500
+
+seeds: [42, 123, 456]
+
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+notes: |
+  - Same UGR Elvira source as the canonical `alon_colon` dataset (62 samples × 2000 genes).
+  - `selected_features: 500` is the high end of the sweep — used to probe prompt-size limits.
+  - Splits are produced by `scripts/prepare_high_dim_extension.py --source alon --dataset-name alon_colon_k500 --selected-features 500`.
+  - If LLM context-limit failures are observed at this k value, the runner will record them; this is a legitimate empirical bound to report rather than hide.

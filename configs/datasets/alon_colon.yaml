@@ -1,0 +1,51 @@
+# Alon Colon Tumor Microarray Dataset Configuration
+
+name: "alon_colon"
+description: "Alon et al. colon tumor gene-expression microarray benchmark"
+
+properties:
+  n_samples: 62
+  n_features: 2000
+  n_features_prompted_evaluated: 50
+  n_classes: 2
+  imbalance_ratio: 1.82
+  minority_class: 1
+  minority_class_name: "normal"
+  majority_class: 0
+  majority_class_name: "tumor"
+
+sensitive_attributes: []
+
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+  feature_selection: "fold_safe_select_k_best_f_classif"
+  selected_features: 50
+
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+notes: |
+  - Canonical high-dimensional microarray benchmark from Alon et al. (PNAS, 1999).
+  - 62 colon tissue samples: 40 tumor and 22 normal; target is encoded as 0=tumor and 1=normal so the minority class is compatible with the current QualSynth generation workflow.
+  - Original data have 2000 gene-expression features.
+  - Reviewer-revision runs use fold-safe training-only SelectKBest(f_classif) to select 50 prompted/evaluated features per seed.
+  - The UGR transformed-data page does not expose an explicit redistribution license; archive source URL, hashes, scripts, split metadata, and results unless raw-data redistribution permission is confirmed.

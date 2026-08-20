@@ -1,0 +1,61 @@
+# Alon Colon Tumor Microarray Dataset Configuration — k=200 sweep variant
+#
+# This is the same source data as `alon_colon` (Alon et al. 1999, UGR Elvira mirror)
+# with a different SelectKBest(f_classif) k value. It exists as its own dataset name
+# so QualSynth's split loader (data/splits/<dataset_name>/split_seed*.pkl) and the
+# experiment runner can treat each k as an independent virtual dataset, without
+# mutating the canonical alon_colon evidence already shipped with the revision.
+#
+# Used by `scripts/run_high_dim_extension.py` to test whether anchor-centric
+# prompting still produces structurally faithful synthetic data when the prompted
+# feature count is 4× the canonical k=50.
+
+name: "alon_colon_k200"
+description: "Alon et al. colon tumor microarray, fold-safe SelectKBest k=200 (k-sweep extension)"
+
+properties:
+  n_samples: 62
+  n_features: 2000
+  n_features_prompted_evaluated: 200
+  n_classes: 2
+  imbalance_ratio: 1.82
+  minority_class: 1
+  minority_class_name: "normal"
+  majority_class: 0
+  majority_class_name: "tumor"
+
+sensitive_attributes: []
+
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+  feature_selection: "fold_safe_select_k_best_f_classif"
+  selected_features: 200
+
+# 3-seed reviewer-revision footprint, matching component_3seed.
+seeds: [42, 123, 456]
+
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+notes: |
+  - Same UGR Elvira source as the canonical `alon_colon` dataset (62 samples × 2000 genes).
+  - `selected_features: 200` is set per training split to test prompt scaling.
+  - Used by the high-dimensional extension to address Reviewer 1's "scales beyond low-dimensional settings" question.
+  - Splits are produced by `scripts/prepare_high_dim_extension.py --source alon --dataset-name alon_colon_k200 --selected-features 200`.

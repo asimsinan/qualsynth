@@ -1,0 +1,54 @@
+# Wine Quality Dataset Configuration
+
+name: "wine_quality"
+description: "Wine Quality dataset for predicting good wines (quality >= 7)"
+
+# Dataset properties
+properties:
+  n_samples: 6497
+  n_features: 12
+  n_classes: 2
+  imbalance_ratio: 4.09
+  minority_class: 1
+  minority_class_name: "good wine"
+
+# No sensitive attributes for this dataset
+sensitive_attributes: []
+
+# Data splits
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+
+# Random seeds for reproducibility
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+# Fairness thresholds
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+# Evaluation metrics
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+# Dataset-specific notes
+notes: |
+  - Medium dataset (6497 samples)
+  - Chemistry domain - wine quality prediction
+  - 12 features (11 physicochemical + wine_type)
+  - Combined red and white wine datasets
+  - Binarized: quality >= 7 = good wine (minority)
+

@@ -1,0 +1,60 @@
+# Golub ALL/AML Leukemia Microarray Dataset Configuration
+#
+# Second canonical high-dimensional gene-expression benchmark added for the
+# reviewer-revision high-dimensional extension. Reviewer 1 asked for
+# "high-dimensional datasets, such as gene expression data, where the number of
+# features reaches into the thousands" (plural). With Alon (62 × 2000) and Golub
+# (72 × 7129) we cover two independent disease/tissue domains and two distinct
+# original-feature-count scales while keeping the fold-safe k=50 prompted/evaluated
+# subset comparable to the existing alon_colon evidence.
+
+name: "golub_leukemia"
+description: "Golub et al. ALL/AML leukemia gene-expression microarray (k=50 prompted/evaluated)"
+
+properties:
+  n_samples: 72
+  n_features: 7129
+  n_features_prompted_evaluated: 50
+  n_classes: 2
+  imbalance_ratio: 1.88   # 47 ALL / 25 AML in the Golub training+test combined cohort
+  minority_class: 1
+  minority_class_name: "AML"
+  majority_class: 0
+  majority_class_name: "ALL"
+
+sensitive_attributes: []
+
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+  feature_selection: "fold_safe_select_k_best_f_classif"
+  selected_features: 50
+
+seeds: [42, 123, 456]
+
+fairness:
+  dpd_threshold: 0.10
+  eod_threshold: 0.10
+  eo_threshold: 0.10
+
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+    - "g_mean"
+  fairness: []
+
+notes: |
+  - Canonical leukemia microarray benchmark from Golub et al. (Science, 1999).
+  - Source: UGR Elvira `.dbc` mirror (https://leo.ugr.es/elvira/DBCRepository/), parsed via the same Elvira parser used for Alon.
+  - 72 samples (47 ALL, 25 AML); target encoded so AML (the smaller class) is `target == 1` for compatibility with QualSynth's generation workflow.
+  - 7129 original gene-expression features; reviewer-revision runs use fold-safe training-only SelectKBest(f_classif) to select 50 prompted/evaluated features per seed for comparability with `alon_colon`.
+  - The UGR transformed-data page does not expose an explicit redistribution license; archive source URL, hashes, scripts, split metadata, and results unless raw-data redistribution permission is confirmed.
+  - Splits are produced by `scripts/prepare_high_dim_extension.py --source golub --dataset-name golub_leukemia --selected-features 50`.

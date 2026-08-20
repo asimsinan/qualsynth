@@ -1,0 +1,46 @@
+name: "qualsynth_r3_luna"
+type: "proposed"
+description: "Round-2 paired backend condition using GPT-5.6 Luna Pro through OpenRouter"
+category: "anchor_centric_llm_backend_sensitivity"
+
+hyperparameters:
+  model_name: "openai/gpt-5.6-luna-pro"
+  api_base: "https://openrouter.ai/api/v1"
+  api_key: null
+  temperature: 0.7
+  top_p: 0.90
+  presence_penalty: 0.3
+  frequency_penalty: 0.3
+  max_output_tokens: 8192
+  reasoning_effort: null
+  strict_request_contract: true
+  resume_generation: false
+  batch_size: 20
+  max_iterations: 0
+  min_iterations: 3
+  stall_iterations: 10
+  duplicate_threshold: 0.10
+  enable_sota_dedup: false
+  enable_semantic_dedup: false
+  quality_threshold: 0.5
+  enable_adaptive_validation: true
+  validation_mode: "standard"
+  adaptive_std_threshold: 4.0
+  adaptive_percentile_threshold: 0.995
+  enable_statistical_validation: true
+  adaptive_percentile_threshold_executed: false
+  anchor_selection_strategy: "stratified"
+  n_anchors: 12
+  use_few_shot: true
+  n_few_shot_examples: 5
+  diversity_prompt_strength: "medium"
+  prompt_policy: "anchor"
+  validation_policy: "full"
+  selection_policy: "multi_objective"
+  clip_to_minority_class: true
+  diversity_weight: 0.20
+  performance_weight: 0.20
+  enable_diversity_first_selection: false
+  classifier_imbalance_policy: "balanced"
+
+notes: "Frozen GPT condition for the paired Reviewer 3 backend study."

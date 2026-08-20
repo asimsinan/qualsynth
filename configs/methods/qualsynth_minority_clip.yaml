@@ -1,0 +1,70 @@
+# QualSynth with class-conditional clip
+# Identical to qualsynth.yaml except generated values are clipped to the
+# MINORITY-class training range only (instead of full training range).
+# Used for the Alon high-dim audit where Reviewer 1 implicitly raises the
+# minority-support question; this variant scores 0% out-of-minority-range
+# at the cost of dropping boundary-region samples.
+name: "qualsynth_minority_clip"
+type: "proposed"
+description: "QualSynth with minority-class-only range clip (for minority-support audit)"
+
+category: "anchor_centric_llm"
+
+# Hyperparameters mirror qualsynth.yaml exactly; only clip_to_minority_class is flipped.
+hyperparameters:
+  model_name: "google/gemma-4-26b-a4b-it"
+  api_base: "https://openrouter.ai/api/v1"
+  api_key: null
+
+  # GENERATION
+  temperature: 0.7
+  top_p: 0.90
+  presence_penalty: 0.3
+  frequency_penalty: 0.3
+
+  # ITERATION
+  batch_size: 20
+  max_iterations: 0
+  min_iterations: 3
+  stall_iterations: 10
+
+  # DUPLICATE PREVENTION
+  duplicate_threshold: 0.10
+  enable_sota_dedup: false
+  enable_semantic_dedup: false
+  sota_semantic_threshold: 0.95
+  sota_diversity_threshold: 0.05
+
+  # ANCHOR SELECTION
+  anchor_selection_strategy: "stratified"
+  n_anchors: 12
+
+  # VALIDATION
+  quality_threshold: 0.5
+  enable_adaptive_validation: true
+  validation_mode: "auto"
+  adaptive_std_threshold: 4.0
+  adaptive_percentile_threshold: 0.995
+  enable_statistical_validation: true
+
+  # MULTI-OBJECTIVE WEIGHTS
+  fairness_weight: 0.00
+  diversity_weight: 0.20
+  performance_weight: 0.20
+  enable_diversity_first_selection: false
+
+  # LEGACY COMPATIBILITY
+  counterfactual_ratio: 0.80
+  strategy: "STANDARD"
+
+  # DIVERSITY PROMPTING
+  enable_diversity_prompting: true
+  diversity_prompt_strength: "medium"
+
+  # PROMPT ENGINEERING
+  use_chain_of_thought: true
+  use_few_shot: true
+  n_few_shot_examples: 5
+
+  # ★ The only difference from qualsynth.yaml: tighten clip to minority bounds.
+  clip_to_minority_class: true
