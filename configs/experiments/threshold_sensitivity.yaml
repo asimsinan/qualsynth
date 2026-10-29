@@ -1,0 +1,53 @@
+name: "threshold_sensitivity"
+description: "Post-hoc validation reliability and safety-diversity analysis on shared raw candidate pools"
+
+datasets:
+  - "german_credit"
+  - "breast_cancer"
+  - "pima_diabetes"
+  - "wine_quality"
+  - "yeast"
+  - "haberman"
+  - "thyroid"
+  - "htru2"
+
+methods:
+  proposed:
+    - "qualsynth"
+
+seeds: [42, 123, 456]
+total_experiments: 24
+
+evaluation:
+  candidate_pool_policy: "same_raw_candidates_across_conditions"
+  classifiers: ["RandomForest", "XGBoost", "LogisticRegression"]
+  metrics: ["acceptance_rate", "train_match_rate", "correlation_distance", "pairwise_diversity", "f1", "roc_auc"]
+
+output:
+  base_dir: "results/threshold_sensitivity"
+  save_condition_candidates: true
+  save_metrics: true
+
+execution:
+  parallel: false
+  n_jobs: 1
+  candidate_source: "results/ablations/component_3seed"
+  candidate_variant: "qualsynth_component_no_validation_raw"
+  calibration_scope: "training_minority_only"
+  classifier_imbalance_policy: "balanced"
+  selection_policy: "generation_order_after_posthoc_validation"
+  stopping_policy: "not_applicable_posthoc"
+  percentile_historical_status: "configured_not_executed"
+
+analysis:
+  fixed_std_thresholds: [3.0, 4.0, 5.0]
+  percentile_sensitivity: [0.99, 0.995, 0.999]
+  include_no_statistical_filter: true
+  calibrated_rule:
+    method: "leave_one_out_max_abs_z_quantile"
+    target_real_minority_retention: 0.95
+    uses_validation_or_test_data: false
+  bootstrap_resamples: 2000
+
+notes: "Initial study is post-hoc and makes no new LLM calls."
+

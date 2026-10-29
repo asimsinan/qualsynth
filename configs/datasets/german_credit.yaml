@@ -1,0 +1,64 @@
+# German Credit Dataset Configuration
+
+name: "german_credit"
+description: "German Credit dataset for credit risk assessment"
+
+# Dataset properties
+properties:
+  n_samples: 1000
+  n_features: 20
+  n_classes: 2
+  imbalance_ratio: 2.33
+  minority_class: 1
+  minority_class_name: "bad credit"
+
+# Sensitive attributes for fairness
+sensitive_attributes:
+  - name: "personal_status"
+    type: "categorical"
+    values: ["A91", "A92", "A93", "A94", "A95"]
+    protected_group: "A92"
+  - name: "age"
+    type: "continuous"
+    range: [19, 75]
+    protected_group: "age < 25"  # Young people
+
+# Data splits
+splits:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+  stratify: true
+
+# Random seeds for reproducibility
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+# Fairness thresholds
+fairness:
+  dpd_threshold: 0.08  # More lenient for small dataset
+  eod_threshold: 0.08
+  eo_threshold: 0.08
+
+# Evaluation metrics
+metrics:
+  performance:
+    - "f1"
+    - "recall"
+    - "precision"
+    - "roc_auc"
+    - "pr_auc"
+    - "balanced_accuracy"
+    - "mcc"
+  fairness:
+    - "demographic_parity_difference"
+    - "equalized_odds_difference"
+    - "equal_opportunity_difference"
+
+# Dataset-specific notes
+notes: |
+  - Small dataset (1000 samples)
+  - Financial domain - credit risk assessment
+  - Multiple sensitive attributes (personal_status, age)
+  - Target: 13x fairness improvement
+  - Uses Adaptive Iteration Predictor for optimal sample generation
+

@@ -1,0 +1,119 @@
+# Main Experiments Configuration
+# Systematic comparison of all methods on all datasets
+
+name: "main_experiments"
+description: "Complete experimental evaluation: 5 methods × 8 datasets × 10 seeds"
+
+# Datasets to evaluate
+datasets:
+  - "german_credit"
+  - "breast_cancer"
+  - "pima_diabetes"
+  - "wine_quality"
+  - "yeast"
+  - "haberman"
+  - "thyroid"
+  - "htru2"
+
+# Methods to evaluate
+methods:
+  baselines:
+    - "smote"
+    - "ctgan"
+    - "tabddpm"
+    - "tabfairgdt"
+  proposed:
+    - "qualsynth"
+
+# Random seeds for reproducibility
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+# Total experiments
+total_experiments: 400  # 5 methods × 8 datasets × 10 seeds
+
+# Evaluation settings
+evaluation:
+  # Classifiers to train
+  classifiers:
+    - name: "random_forest"
+      params:
+        n_estimators: 100
+        max_depth: 10
+        random_state: null
+    - name: "xgboost"
+      params:
+        n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
+        random_state: null
+    - name: "logistic_regression"
+      params:
+        max_iter: 1000
+        random_state: null
+  
+  # Cross-validation
+  cv_folds: 5
+  
+  # Metrics to compute
+  metrics:
+    performance:
+      - "f1"
+      - "recall"
+      - "precision"
+      - "roc_auc"
+      - "pr_auc"
+      - "balanced_accuracy"
+      - "mcc"
+    fairness:
+      - "demographic_parity_difference"
+      - "equalized_odds_difference"
+      - "equal_opportunity_difference"
+
+# Output settings
+output:
+  base_dir: "results/experiments/main"
+  save_models: false  # Don't save models (too large)
+  save_predictions: true
+  save_metrics: true
+  save_generated_data: true
+  
+  # Result format
+  format:
+    metrics: "csv"
+    summary: "json"
+    plots: "png"
+
+# Execution settings
+execution:
+  parallel: false  # Run sequentially for now
+  n_jobs: 1
+  verbose: true
+  log_level: "INFO"
+  
+  # Checkpointing
+  checkpoint: true
+  checkpoint_dir: "results/experiments/checkpoints"
+  resume_from_checkpoint: true
+
+# Resource limits
+resources:
+  max_time_per_experiment: 3600  # 1 hour
+  max_memory_gb: 16
+  
+# Failure handling
+failure_handling:
+  max_retries: 2
+  skip_on_failure: true
+  log_failures: true
+
+# Notifications
+notifications:
+  enabled: false
+  email: null
+  slack_webhook: null
+
+# Notes
+notes: |
+  Main experimental evaluation comparing all methods.
+
+

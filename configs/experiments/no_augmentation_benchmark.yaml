@@ -1,0 +1,49 @@
+name: "no_augmentation_benchmark"
+description: "No-oversampling references: class-weighted primary and unweighted secondary conditions"
+
+datasets:
+  - "german_credit"
+  - "breast_cancer"
+  - "pima_diabetes"
+  - "wine_quality"
+  - "yeast"
+  - "haberman"
+  - "thyroid"
+  - "htru2"
+
+methods:
+  baselines:
+    - "no_augmentation"
+    - "no_augmentation_unweighted"
+
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+total_experiments: 160
+
+evaluation:
+  classifiers: ["RandomForest", "XGBoost", "LogisticRegression"]
+  primary_condition: "no_augmentation"
+  secondary_condition: "no_augmentation_unweighted"
+  test_fold_policy: "stored_held_out_test_only"
+
+output:
+  base_dir: "results/no_augmentation"
+  save_generated_data: true
+  save_metrics: true
+
+execution:
+  parallel: false
+  n_jobs: 1
+  resume_from_checkpoint: true
+  augmentation_policy: "none"
+  validation_policy: "not_applicable"
+  selection_policy: "not_applicable"
+  stopping_policy: "not_applicable"
+  classifier_imbalance_policies: ["balanced", "none"]
+
+analysis:
+  preserve_original_five_method_results: true
+  add_primary_to_main_comparison: true
+  pairing_unit: ["dataset", "seed", "classifier"]
+
+notes: "No LLM or synthetic-data generator is invoked."
+

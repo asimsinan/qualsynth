@@ -1,0 +1,60 @@
+name: "backend_sensitivity"
+description: "Paired Gemma/GPT backend sensitivity under one frozen request and validation contract"
+
+datasets:
+  - "haberman"
+  - "breast_cancer"
+  - "pima_diabetes"
+  - "yeast"
+
+methods:
+  proposed:
+    - "qualsynth_gemma3"
+    - "qualsynth_luna"
+
+seeds: [42, 123, 456]
+total_experiments: 24
+
+evaluation:
+  classifiers: ["RandomForest", "XGBoost", "LogisticRegression"]
+  paired_by: ["dataset", "seed"]
+  primary_outcomes: ["parsed_rate", "acceptance_rate", "exact_duplicate_rate", "f1", "roc_auc"]
+
+output:
+  base_dir: "results/backend_sensitivity/core"
+  save_generated_data: true
+  save_metrics: true
+  save_raw_responses: true
+  save_rejected_candidates: true
+
+execution:
+  parallel: false
+  n_jobs: 1
+  resume_from_checkpoint: true
+  common_request_contract: "single_user_csv_v1"
+  unsupported_parameter_policy: "fail_fast"
+  selection_policy: "multi_objective"
+  validation_policy: "full"
+  validation_mode: "standard"
+  validation_std_threshold: 4.0
+  percentile_guard_executed: false
+  clip_reference_population: "minority_training_fold"
+  stall_iterations: 10
+  classifier_imbalance_policy: "balanced"
+
+analysis:
+  pilot:
+    datasets: ["haberman", "breast_cancer"]
+    seeds: [42]
+    output_dir: "results/backend_sensitivity/pilot"
+    full_study_requires_pilot_review: true
+  models:
+    historical_reference: "google/gemma-3-27b-it:free"
+    current_paired_reference: "google/gemma-3-27b-it"
+    additional: "openai/gpt-5.6-luna-pro"
+
+notes: |
+  Interface flexibility is not interpreted as backend-invariant behavior.
+  The historical free Gemma slug is retained as provenance only; it returned
+  HTTP 404 in the pilot, so the same model's current paid slug is used.
+  Full-study paid calls proceed only after pilot cost/compatibility review.

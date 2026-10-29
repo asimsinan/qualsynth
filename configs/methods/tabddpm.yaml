@@ -1,0 +1,61 @@
+# TabDDPM (Tabular Diffusion Probabilistic Model) Configuration
+
+name: "TabDDPM"
+type: "baseline"
+description: "Diffusion-based tabular data synthesis using the official TabDDPM implementation"
+
+# Method category
+category: "deep_learning"
+
+# Hyperparameters
+hyperparameters:
+  model_type: "mlp"
+  hidden_dims: [256, 256]
+  dropout: 0.0
+  steps: 1000
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  batch_size: 256
+  sample_batch_size: 512
+  num_timesteps: 1000
+  gaussian_loss_type: "mse"
+  scheduler: "cosine"
+  normalization: "quantile"
+  device: "cpu"
+  verbose: false
+  repo_dir: null
+  workspace_root: null
+  keep_workspace: false
+  random_state: null  # Will be set by experiment config
+
+# Hyperparameter tuning grid
+tuning_grid:
+  steps: [500, 1000, 2000]
+  hidden_dims: [[128, 128], [256, 256], [512, 512]]
+  normalization: ["standard", "quantile"]
+
+# Method-specific settings
+settings:
+  requires_numerical: false
+  requires_preprocessing: true
+  supports_multiclass: false
+  gpu_accelerated: true
+  upstream_repository_required: true
+
+# Expected performance
+expected:
+  time_per_sample: 0.05  # seconds after training; training dominates runtime
+  memory_usage: "high"
+  scalability: "moderate"
+
+# References
+references:
+  - "Kotelnikov et al. (2023). TabDDPM: Modelling Tabular Data with Diffusion Models"
+  - "Official implementation: yandex-research/tab-ddpm"
+
+# Notes
+notes: |
+  - Uses the official upstream TabDDPM code vendored under third_party/tab-ddpm
+  - Trains on the existing train/val/test split exported to the upstream .npy format
+  - Currently configured for binary classification oversampling
+  - Defaults to CPU for stability inside the existing experiment runner

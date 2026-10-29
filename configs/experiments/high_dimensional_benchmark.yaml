@@ -1,0 +1,92 @@
+# High-Dimensional Benchmark
+
+name: "high_dimensional_benchmark"
+description: "High-dimensional Alon colon microarray experiment: 5 methods × 1 dataset × 10 seeds"
+
+datasets:
+  - "alon_colon"
+
+methods:
+  baselines:
+    - "smote"
+    - "ctgan"
+    - "tabddpm"
+    - "tabfairgdt"
+  proposed:
+    - "qualsynth"
+
+seeds: [42, 123, 456, 789, 1234, 2024, 3141, 4242, 5555, 6789]
+
+total_experiments: 50
+
+evaluation:
+  classifiers:
+    - name: "random_forest"
+      params:
+        n_estimators: 100
+        max_depth: 10
+        random_state: null
+    - name: "xgboost"
+      params:
+        n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
+        random_state: null
+    - name: "logistic_regression"
+      params:
+        max_iter: 1000
+        random_state: null
+  cv_folds: 5
+  metrics:
+    performance:
+      - "f1"
+      - "recall"
+      - "precision"
+      - "roc_auc"
+      - "pr_auc"
+      - "balanced_accuracy"
+      - "mcc"
+    fairness: []
+
+output:
+  base_dir: "results/high_dimensional_benchmark/experiments"
+  save_models: false
+  save_predictions: true
+  save_metrics: true
+  save_generated_data: true
+  format:
+    metrics: "csv"
+    summary: "json"
+    plots: "png"
+
+execution:
+  parallel: false
+  n_jobs: 1
+  verbose: true
+  log_level: "INFO"
+  checkpoint: true
+  checkpoint_dir: "results/high_dimensional_benchmark/checkpoints"
+  resume_from_checkpoint: true
+  enable_universal_validation: true
+  validation_mode: "auto"
+
+resources:
+  max_time_per_experiment: 7200
+  max_memory_gb: 16
+
+failure_handling:
+  max_retries: 1
+  skip_on_failure: true
+  log_failures: true
+
+notifications:
+  enabled: false
+  email: null
+  slack_webhook: null
+
+notes: |
+  Prepare splits first:
+    python scripts/prepare_high_dimensional_benchmark.py
+  Then run:
+    python scripts/run_experiments.py high_dimensional_benchmark
+  The split preparation script fits feature selection only within each training split and reuses the selected feature subset for all methods/classifiers for that seed.
