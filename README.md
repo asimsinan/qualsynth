@@ -208,14 +208,6 @@ qualsynth/
     └── validation/             # Validation and threshold calibration
 ```
 
-## Changes in 1.1.3
-
-The CTGAN baseline now imports PyTorch's compiler module before forcing CPU execution, which recent PyTorch versions require; device handling is unchanged. `scripts/build_high_dim_table.py` computes the high-dimensional table with all five methods at every setting, and the reproduction prerequisites describe how to install the official TabDDPM implementation. The companion dataset (`qualsynth-1.1.3-data.zip`) adds the corresponding runs.
-
-## Changes in 1.1.2
-
-The exact-duplicate check now canonicalises numeric values before hashing: values are cast to floating point, rounded to 12 decimal places, and signed zeros are normalised, so numerically equal rows (for example `0` and `-0`, or `40` and `40.0`) are always treated as duplicates, within a batch and against the reference set. Candidates are also compared with the whole training fold (`duplicate_reference`), so no admitted row equals a real training row of either class. Anchor strata are formed on the first feature that is not declared categorical in the dataset schema. `tests/test_duplicate_canonicalisation.py` covers these cases (`python -m pytest tests`). The main-benchmark experiments were run with the earlier exact-match check; the Haberman runs of the backend study were re-executed with this version, and the threshold-study rules and the final validation pass of the component-ablation runs were re-applied with this version (`scripts/reapply_ablation_final_pass.py`), and the companion dataset (`qualsynth-1.1.2-data.zip`) contains the updated results.
-
 ## License
 
 QualSynth is distributed under the GNU General Public License v3.0. See [LICENSE](LICENSE).
